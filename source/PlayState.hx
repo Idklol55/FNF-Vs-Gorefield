@@ -285,7 +285,7 @@ class PlayState extends MusicBeatState
 
 	var scream:FlxSprite = null;
 
-	var tweens:Array<FlxTween> = [];
+	var pausables:Array<Dynamic> = [];
 	var char:String = '';
 
 	override public function create()
@@ -843,7 +843,7 @@ class PlayState extends MusicBeatState
 		ps.playAnim('4');
 		ps.screenCenter();
 		ps.x += (ps.width * 2) + 10;
-		ps.y += ps.height * 3 + 42;
+		ps.y += ClientPrefs.downScroll ? (-ps.height * 3) + -ps.height/2 : ps.height * 3 + 42;
 		add(ps);
 
 		scream = new FlxSprite(0, 0);
@@ -854,6 +854,7 @@ class PlayState extends MusicBeatState
 		scream.updateHitbox();
 		scream.cameras = [camHUD];
 		scream.visible = false;
+		scream.screenCenter();
 		add(scream);
 
 		strumLineNotes.cameras = [camHUD];
@@ -1849,7 +1850,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			for (tween in tweens) {
+			for (tween in pausables) {
 				tween.active = false;
 			}
 
@@ -1894,7 +1895,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			for (tween in tweens) {
+			for (tween in pausables) {
 				tween.active = true;
 			}
 			
@@ -2508,6 +2509,9 @@ class PlayState extends MusicBeatState
 				for (timer in modchartTimers) {
 					timer.active = true;
 				}
+				camGame.stopFX();
+				camHUD.stopFX();
+
 				openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y, char));
 
 				// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
@@ -4129,16 +4133,16 @@ class PlayState extends MusicBeatState
 			{
 				case 393:
 					dad.stunned = true;
-					tweens.push(FlxTween.tween(blackBord, {alpha: 1}, 15));
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 1.5}, 15, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 1.5;}}));
+					pausables.push(FlxTween.tween(blackBord, {alpha: 1}, 15));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 1.5}, 15, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 1.5;}}));
 				case 512:
 					dad.stunned = false;
-					tweens.push(FlxTween.tween(blackBord, {alpha: 0}, 1));
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
+					pausables.push(FlxTween.tween(blackBord, {alpha: 0}, 1));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
 				case 768:
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 0.55}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.55;}}));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 0.55}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.55;}}));
 				case 1036:
-					FlxTween.tween(blackFuck, {alpha: 1}, 4);
+					pausables.push(FlxTween.tween(blackFuck, {alpha: 1}, 4));
 			}
 		}
 
@@ -4147,23 +4151,23 @@ class PlayState extends MusicBeatState
 			switch (curStep)
 			{
 				case 320:
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 0.65}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.65;}}));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 0.65}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.65;}}));
 				case 384:
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
 				case 400:
-					tweens.push(FlxTween.tween(blackBord, {alpha: 1}, 6));
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 1.5}, 6, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 1.5;}}));	
+					pausables.push(FlxTween.tween(blackBord, {alpha: 1}, 6));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 1.5}, 6, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 1.5;}}));	
 				case 448:
-					tweens.push(FlxTween.tween(blackBord, {alpha: 0}, 1));
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
+					pausables.push(FlxTween.tween(blackBord, {alpha: 0}, 1));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
 				case 576:
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 0.65}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.65;}}));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 0.65}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.65;}}));
 				case 832:
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
 				case 1072:
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 0.65}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.65;}}));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 0.65}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.65;}}));
 				case 1097:
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 0.75}, 1, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 0.75;}}));
 			}
 		}
 
@@ -4172,20 +4176,20 @@ class PlayState extends MusicBeatState
 			switch (curStep)
 			{
 				case 1024:
-					new FlxTimer().start(0.5, function(tmrr:FlxTimer)
+					pausables.push(new FlxTimer().start(0.5, function(tmrr:FlxTimer)
 					{
-						FlxTween.tween(redBord, {alpha: 1}, 0.5, {type: PINGPONG});
-					});
+						pausables.push(FlxTween.tween(redBord, {alpha: 1}, 0.5, {type: PINGPONG}));
+					}));
 				case 1132:
 					jon.x = 620;
 					jon.y = 70;
 					jon.animation.play("boom", false);
 				case 1140:
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 1.2}, 0.5, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 1.2;}}));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 1.2}, 0.5, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 1.2;}}));
 				case 1148:
 					FlxG.sound.play(Paths.sound('Explosion_Jon'));
 					camOther.flash(FlxColor.WHITE, 6);
-					FlxTween.tween(whiteFuck, {alpha: 1}, 0.2);
+					pausables.push(FlxTween.tween(whiteFuck, {alpha: 1}, 0.2));
 
 					for (note in unspawnNotes) {
 						if (note.noteType == "") {
@@ -4210,11 +4214,11 @@ class PlayState extends MusicBeatState
 					jon.visible = false;
 					bgFinal.visible = true;
 					bgHorror.visible = false;
-					tweens.push(FlxTween.tween(FlxG.camera, {zoom: 1.5}, 0.5, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 1.5;}}));
+					pausables.push(FlxTween.tween(FlxG.camera, {zoom: 1.5}, 0.5, {ease: FlxEase.quadInOut, onComplete: function (tween:FlxTween) {defaultCamZoom = 1.5;}}));
 				case 1165:
-					FlxTween.tween(whiteFuck, {alpha: 0}, 0.5);
+					pausables.push(FlxTween.tween(whiteFuck, {alpha: 0}, 0.5));
 				case 1690:
-					FlxTween.tween(blackFuck, {alpha: 1}, 2.5);
+					pausables.push(FlxTween.tween(blackFuck, {alpha: 1}, 2.5));
 			}
 		}
 
